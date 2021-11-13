@@ -1,0 +1,10 @@
+[workspace]
+
+members = [
+    "js5",
+    "auction",
+    "clan",
+    "friend",
+    "login",
+    "worldproxy",
+]

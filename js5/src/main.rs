@@ -1,5 +1,5 @@
 use config::Config;
-use rscache::OsrsCache;
+use osrscache::Cache;
 use std::sync::{Arc, Mutex};
 
 mod config;
@@ -14,7 +14,7 @@ async fn main() {
         &mut Arc::new(Mutex::new(toml::from_str(&config_file_string).unwrap()));
 
     // Load cache
-    let cache = &mut Arc::new(OsrsCache::new("cache").expect("could not load cache"));
+    let cache = &mut Arc::new(Cache::new("cache").expect("could not load cache"));
 
     // Create socket acceptor for accepting connections, loop forever
     network::accept_js5_sockets(cache, config).await.unwrap();

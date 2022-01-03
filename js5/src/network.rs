@@ -1,11 +1,11 @@
-use rscache::OsrsCache;
+use osrscache::Cache;
 use std::sync::{Arc, Mutex};
 use tokio::net::TcpListener;
 
 use crate::{config::Config, js5};
 
 pub async fn accept_js5_sockets(
-    cache: &mut Arc<OsrsCache>,
+    cache: &mut Arc<Cache>,
     config: &mut Arc<Mutex<Config>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let config_lock = config.lock().unwrap();

@@ -1,4 +1,4 @@
-use rscache::OsrsCache;
+use osrscache::{checksum::Checksum, Cache};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
@@ -7,7 +7,7 @@ use tokio::{
 pub async fn read_revision(
     revision: i32,
     socket: &mut TcpStream,
-    cache: &mut std::sync::Arc<OsrsCache>,
+    cache: &mut std::sync::Arc<Cache>,
 ) {
     let game_revision = socket.read_i32().await.unwrap();
     if game_revision != revision {
@@ -20,7 +20,7 @@ pub async fn read_revision(
 }
 
 // Main loop for reading JS5 packets
-async fn js5_loop(socket: &mut TcpStream, cache: &mut std::sync::Arc<OsrsCache>) {
+async fn js5_loop(socket: &mut TcpStream, cache: &mut std::sync::Arc<Cache>) {
     loop {
         let opcode = socket.read_u8().await;
 
@@ -37,18 +37,14 @@ async fn js5_loop(socket: &mut TcpStream, cache: &mut std::sync::Arc<OsrsCache>)
     }
 }
 
-async fn handle_file_request(socket: &mut TcpStream, cache: &mut std::sync::Arc<OsrsCache>) {
+async fn handle_file_request(socket: &mut TcpStream, cache: &mut std::sync::Arc<Cache>) {
     let index_id = socket.read_u8().await.unwrap();
     let archive_id = socket.read_u16().await.unwrap();
 
     // if requesting the meta index file
     if index_id == 255 && archive_id == 255 {
-        let checksum = cache
-            .create_checksum()
-            .expect("failed creating cache checksum");
-        let encoded_checksum = checksum
-            .encode_osrs()
-            .expect("failed encoding cache checksum");
+        let checksum = Checksum::new(cache).unwrap();
+        let encoded_checksum = checksum.encode().expect("failed encoding cache checksum");
 
         // bytebuffer for checksum
         let mut checksum_buf = Vec::new();

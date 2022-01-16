@@ -56,8 +56,15 @@ async fn transfer(inbound: TcpStream, proxy_addr: String) -> Result<(), Box<dyn 
 
     tokio::spawn(async move {
         loop {
-            if io::copy(&mut ri, &mut wo).await.is_err() {
-                break;
+            let copied = io::copy(&mut ri, &mut wo).await;
+
+            match copied {
+                Ok(copied) => {
+                    if copied == 0 {
+                        break;
+                    }
+                }
+                Err(_) => break,
             }
         }
     });

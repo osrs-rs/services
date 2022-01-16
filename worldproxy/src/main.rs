@@ -63,13 +63,12 @@ async fn transfer(inbound: TcpStream, proxy_addr: String) -> Result<(), Box<dyn 
 fn create_proxy_task(mut reader: OwnedReadHalf, mut writer: OwnedWriteHalf) {
     tokio::spawn(async move {
         loop {
-            if let Ok(copied_bytes) = io::copy(&mut reader, &mut writer).await {
+            while let Ok(copied_bytes) = io::copy(&mut reader, &mut writer).await {
                 if copied_bytes == 0 {
                     break;
                 }
-            } else {
-                break;
             }
+            break;
         }
     });
 }

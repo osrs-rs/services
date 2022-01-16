@@ -33,10 +33,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let js5_addr = js5_addr.clone();
 
         tokio::spawn(async move {
-            match socket.set_nodelay(true) {
-                Ok(n) => n,
-                Err(e) => eprintln!("Failed to set nodelay on socket, error: {}", e),
-            }
+            socket
+                .set_nodelay(true)
+                .expect("failed setting nodelay on socket");
 
             if let Ok(service) = socket.read_u8().await {
                 match service {

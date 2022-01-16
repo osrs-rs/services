@@ -49,13 +49,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 async fn transfer(inbound: TcpStream, proxy_addr: String) {
-    let outbound = TcpStream::connect(proxy_addr).await.unwrap();
+    if let Ok(outbound) = TcpStream::connect(proxy_addr).await {
+        let (ri, wi) = inbound.into_split();
+        let (ro, wo) = outbound.into_split();
 
-    let (ri, wi) = inbound.into_split();
-    let (ro, wo) = outbound.into_split();
-
-    create_proxy_task(ri, wo);
-    create_proxy_task(ro, wi);
+        create_proxy_task(ri, wo);
+        create_proxy_task(ro, wi);
+    }
 }
 
 fn create_proxy_task(mut reader: OwnedReadHalf, mut writer: OwnedWriteHalf) {

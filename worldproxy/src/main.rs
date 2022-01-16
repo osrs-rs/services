@@ -39,8 +39,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
             if let Ok(service) = socket.read_u8().await {
                 match service {
-                    WORLD => transfer(socket, world_addr).await.unwrap(),
-                    JS5 => transfer(socket, js5_addr).await.unwrap(),
+                    WORLD => transfer(socket, world_addr).await,
+                    JS5 => transfer(socket, js5_addr).await,
                     _ => (),
                 }
             }
@@ -48,16 +48,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 }
 
-async fn transfer(inbound: TcpStream, proxy_addr: String) -> Result<(), Box<dyn Error>> {
-    let outbound = TcpStream::connect(proxy_addr).await?;
+async fn transfer(inbound: TcpStream, proxy_addr: String) {
+    let outbound = TcpStream::connect(proxy_addr).await.unwrap();
 
     let (ri, wi) = inbound.into_split();
     let (ro, wo) = outbound.into_split();
 
     create_proxy_task(ri, wo);
     create_proxy_task(ro, wi);
-
-    Ok(())
 }
 
 fn create_proxy_task(mut reader: OwnedReadHalf, mut writer: OwnedWriteHalf) {

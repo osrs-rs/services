@@ -2,6 +2,7 @@ use std::env;
 use std::error::Error;
 use tokio::io;
 use tokio::io::AsyncReadExt;
+use tokio::net::tcp::{OwnedReadHalf, OwnedWriteHalf};
 use tokio::net::{TcpListener, TcpStream};
 
 const WORLD: u8 = 14;
@@ -51,32 +52,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
 async fn transfer(inbound: TcpStream, proxy_addr: String) -> Result<(), Box<dyn Error>> {
     let outbound = TcpStream::connect(proxy_addr).await?;
 
-    let (mut ri, mut wi) = inbound.into_split();
-    let (mut ro, mut wo) = outbound.into_split();
+    let (ri, wi) = inbound.into_split();
+    let (ro, wo) = outbound.into_split();
 
-    tokio::spawn(async move {
-        loop {
-            if let Ok(copied) = io::copy(&mut ri, &mut wo).await {
-                if copied == 0 {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-    });
-
-    tokio::spawn(async move {
-        loop {
-            if let Ok(copied) = io::copy(&mut ro, &mut wi).await {
-                if copied == 0 {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-    });
+    create_proxy_task(ri, wo);
+    create_proxy_task(ro, wi);
 
     Ok(())
+}
+
+fn create_proxy_task(mut reader: OwnedReadHalf, mut writer: OwnedWriteHalf) {
+    tokio::spawn(async move {
+        loop {
+            if let Ok(copied_bytes) = io::copy(&mut reader, &mut writer).await {
+                if copied_bytes == 0 {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+    });
 }

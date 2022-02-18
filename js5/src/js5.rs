@@ -62,7 +62,8 @@ async fn handle_file_request(socket: &mut TcpStream, cache: &mut std::sync::Arc<
 
         // if index is not 255, we have to remove the useless version (2 bytes)
         if index_id != 255 {
-            buf.truncate(buf.len() - 2);
+            let len = buf.len();
+            buf.truncate(len - 2);
         }
 
         let compression = *buf.get(0).unwrap();

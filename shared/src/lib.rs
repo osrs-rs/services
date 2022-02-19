@@ -4,7 +4,7 @@ use std::collections::HashMap;
 /// The data for the player, to be serialized and deserialized across services.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlayerData {
-    pub skills: HashMap<u8, Skill>,
+    pub skills: Vec<Skill>,
     pub inventories: HashMap<u16, Inventory>,
 }
 

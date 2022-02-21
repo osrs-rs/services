@@ -6,6 +6,7 @@ use std::collections::HashMap;
 pub struct PlayerData {
     pub skills: Vec<Skill>,
     pub inventories: HashMap<u16, Inventory>,
+    pub run_energy: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

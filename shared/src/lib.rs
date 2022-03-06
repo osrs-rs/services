@@ -22,6 +22,6 @@ pub struct Inventory {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
-    pub id: i32,
-    pub amount: i32,
+    pub id: i16,
+    pub amount: u32,
 }

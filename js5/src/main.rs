@@ -1,5 +1,5 @@
 use config::Config;
-use osrscache::Cache;
+use rscache::Cache;
 use std::sync::{Arc, Mutex};
 
 mod config;

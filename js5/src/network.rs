@@ -1,4 +1,4 @@
-use osrscache::Cache;
+use rscache::Cache;
 use std::sync::{Arc, Mutex};
 use tokio::net::TcpListener;
 

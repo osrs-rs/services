@@ -1,4 +1,4 @@
-use osrscache::{checksum::Checksum, Cache};
+use rscache::{checksum::Checksum, Cache};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,

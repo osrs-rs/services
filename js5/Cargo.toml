@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-osrs-cache = "0.2"
+rs-cache = "0.8"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "^1.17", features = ["full"] }
 toml = "0.5"
